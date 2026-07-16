@@ -130,9 +130,9 @@ response = requests.post(
     files={"file": ("invoice.pdf", open("invoice.pdf", "rb"), "application/pdf")},
 )
 
-data = response.json()
-# The invoice model is nested under the "invoice" key.
-print(data["invoice"]["seller"]["name"])
+invoice = response.json()
+# The invoice fields sit at the root of the response.
+print(invoice["seller"]["name"], invoice["totals"]["grandTotalAmount"])
 ```
 
 [Full example: `extract_json.py`](./extract_json.py) | [API reference](https://www.invoicexml.com/docs/api/extract/json)

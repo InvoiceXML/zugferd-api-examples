@@ -129,9 +129,9 @@ const response = await fetch('https://api.invoicexml.com/v1/extract/json', {
     body: form,
 });
 
-const data = await response.json();
-// The invoice model is nested under the "invoice" key.
-console.log(data.invoice.seller.name);
+const invoice = await response.json();
+// The invoice fields sit at the root of the response.
+console.log(invoice.seller.name, invoice.totals.grandTotalAmount);
 ```
 
 [Full example: `extract-json.js`](./extract-json.js) | [API reference](https://www.invoicexml.com/docs/api/extract/json)

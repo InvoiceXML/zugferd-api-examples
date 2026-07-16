@@ -128,8 +128,8 @@ curl_setopt_array($ch, [
 ]);
 $json = curl_exec($ch);
 $data = json_decode($json, true);
-// The invoice model is nested under the "invoice" key.
-echo $data['invoice']['seller']['name'];
+// The invoice fields sit at the root of the response.
+echo $data['seller']['name'];
 ```
 
 [Full example: `extract-json.php`](./extract-json.php) | [API reference](https://www.invoicexml.com/docs/api/extract/json)
