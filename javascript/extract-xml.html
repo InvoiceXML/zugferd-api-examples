@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Extract ZUGFeRD XML with InvoiceXML API</title>
+<!--
+  Get API key: https://www.invoicexml.com/account/authentication
+  Docs:        https://www.invoicexml.com/docs/api/extract/xml
+
+  WARNING: do not ship API keys in production browser code. Proxy through
+  your own backend so the key stays server-side.
+-->
+
+<h1>Extract embedded XML from ZUGFeRD PDF</h1>
+<input type="file" id="file" accept="application/pdf">
+<button id="run">Extract</button>
+<p id="status"></p>
+<pre id="output"></pre>
+
+<script>
+// Raw key only, without the "Bearer " prefix (it is added below).
+const apiKey = 'YOUR_API_KEY';
+
+document.getElementById('run').addEventListener('click', async () => {
+    const file = document.getElementById('file').files[0];
+    if (!file) return alert('Choose a PDF first.');
+
+    const form = new FormData();
+    form.append('file', file);
+
+    const response = await fetch('https://api.invoicexml.com/v1/extract/xml', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + apiKey },
+        body: form,
+    });
+
+    const xml = await response.text();
+    if (!response.ok) {
+        document.getElementById('status').textContent = `InvoiceXML API error ${response.status}: ${xml}`;
+        return;
+    }
+
+    document.getElementById('output').textContent = xml;
+    const blob = new Blob([xml], { type: 'application/xml' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'factur-x.xml';
+    a.textContent = 'Download factur-x.xml';
+    document.getElementById('status').replaceChildren(a);
+});
+</script>
