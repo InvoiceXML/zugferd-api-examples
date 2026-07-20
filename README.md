@@ -156,7 +156,9 @@ Browser-side examples for generating and inspecting ZUGFeRD invoices client-side
 
 ## Extract structured data from ZUGFeRD as JSON
 
-Many downstream systems (ERPs, accounting software, expense management tools) work natively with JSON rather than XML. The `ExtractJson` examples in every language read the embedded ZUGFeRD XML, parse it according to EN 16931 semantics, and emit a clean JSON object containing seller, buyer, line items, tax breakdown, totals, and payment details.
+Many downstream systems (ERPs, accounting software, expense management tools) work natively with JSON rather than XML. The `ExtractJson` examples in every language read the embedded ZUGFeRD XML, parse it according to EN 16931 semantics, and emit a clean JSON response with the invoice document under the `invoice` key: seller, buyer, line items, tax breakdown, totals, and payment details.
+
+A complete sample response with every field of the invoice model populated is in [json/extract-json-response.json](./json/extract-json-response.json); optional fields that are absent from the source document come back as `null` (empty arrays for lists).
 
 This is the fastest way to get invoice data out of a ZUGFeRD PDF into a modern data pipeline.
 

@@ -130,12 +130,12 @@ response = requests.post(
     files={"file": ("invoice.pdf", open("invoice.pdf", "rb"), "application/pdf")},
 )
 
-invoice = response.json()
-# The invoice fields sit at the root of the response.
+# The invoice document sits under the "invoice" key of the response.
+invoice = response.json()["invoice"]
 print(invoice["seller"]["name"], invoice["totals"]["grandTotalAmount"])
 ```
 
-[Full example: `extract_json.py`](./extract_json.py) | [API reference](https://www.invoicexml.com/docs/api/extract/json)
+[Full example: `extract_json.py`](./extract_json.py) | [API reference](https://www.invoicexml.com/docs/api/extract/json) | [Sample response](../json/extract-json-response.json)
 
 ---
 

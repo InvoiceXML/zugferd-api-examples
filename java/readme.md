@@ -157,7 +157,7 @@ try (Response response = new OkHttpClient().newCall(
 }
 ```
 
-[Full example: `ExtractJson.java`](./ExtractJson.java) | [API reference](https://www.invoicexml.com/docs/api/extract/json)
+[Full example: `ExtractJson.java`](./ExtractJson.java) | [API reference](https://www.invoicexml.com/docs/api/extract/json) | [Sample response](../json/extract-json-response.json)
 
 ---
 
