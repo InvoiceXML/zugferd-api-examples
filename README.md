@@ -2,7 +2,7 @@
 
 Open-source code examples for working with **ZUGFeRD**, the German hybrid e-invoicing standard combining a human-readable PDF/A-3 with embedded structured XML data. Compliant with **EN 16931**, technically identical to **Factur-X** in France, and ready for Germany's B2B e-invoicing mandate (reception mandatory since January 2025).
 
-Examples in **C#, Java, PHP, JavaScript, Node.js, and Python** covering every common ZUGFeRD operation: invoice creation, validation, structured data extraction as JSON, raw XML extraction, and (experimental) AI-powered conversion of plain PDF invoices into compliant ZUGFeRD documents.
+Examples in **C#, Java, PHP, JavaScript, Node.js, Python, and Ruby** covering every common ZUGFeRD operation: invoice creation, validation, structured data extraction as JSON, raw XML extraction, and (experimental) AI-powered conversion of plain PDF invoices into compliant ZUGFeRD documents.
 
 Provided and maintained by [InvoiceXML](https://www.invoicexml.com), a complete e-invoice compliance toolkit for electronic invoicing standards, including ZUGFeRD, Factur-X, UBL, Peppol BIS Billing, and XRechnung, available via REST-API, no-code platforms, and MCP server.
 
@@ -24,6 +24,7 @@ The EN 16931 specification alone runs over 400 pages, PDF/A-3b conformance is st
   - [Create and validate ZUGFeRD with JavaScript in the browser](#create-and-validate-zugferd-with-javascript-in-the-browser)
   - [Create and validate ZUGFeRD with Node.js](#create-and-validate-zugferd-with-nodejs)
   - [Create and validate ZUGFeRD with Python](#create-and-validate-zugferd-with-python)
+  - [Create and validate ZUGFeRD with Ruby](#create-and-validate-zugferd-with-ruby)
 - [Extract structured data from ZUGFeRD as JSON](#extract-structured-data-from-zugferd-as-json)
 - [Extract embedded XML from a ZUGFeRD PDF](#extract-embedded-xml-from-a-zugferd-pdf)
 - [AI-powered PDF to ZUGFeRD conversion (Experimental)](#ai-powered-pdf-to-zugferd-conversion-experimental)
@@ -152,6 +153,22 @@ Browser-side examples for generating and inspecting ZUGFeRD invoices client-side
 
 [Open the Python examples →](./python)
 
+### Create and validate ZUGFeRD with Ruby
+
+Standard library only (`Net::HTTP`), no gems. The Ruby folder additionally covers AI parsing of old-school PDFs with confidence scores and embedded attachment extraction.
+
+```
+/ruby
+  create.rb
+  validate.rb
+  extract_json.rb
+  extract_xml.rb
+  parse_json.rb
+  extract_attachments.rb
+```
+
+[Open the Ruby examples →](./ruby)
+
 ---
 
 ## Extract structured data from ZUGFeRD as JSON
@@ -252,7 +269,7 @@ ZUGFeRD is a hybrid PDF+XML format using the UN/CEFACT Cross-Industry Invoice (C
 
 Pull requests are welcome. Useful contributions include:
 
-- Additional languages (Go, Rust, Ruby, Kotlin, Swift)
+- Additional languages (Go, Rust, Kotlin, Swift)
 - Alternative library implementations in existing languages
 - Sample invoice fixtures covering edge cases (multi-currency, intra-EU reverse charge, zero-rated supplies, credit notes)
 - Translations of the README and inline comments
