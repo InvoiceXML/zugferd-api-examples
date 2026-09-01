@@ -34,7 +34,7 @@ These examples use the built-in `curl_*` functions and `CURLFile` (available sin
 | [`validate.php`](./validate.php) | Validate a ZUGFeRD file against schematron rules | [`POST /v1/validate/zugferd`](https://www.invoicexml.com/docs/api/validate/zugferd) |
 | [`extract-json.php`](./extract-json.php) | Extract ZUGFeRD invoice data as JSON | [`POST /v1/extract/json`](https://www.invoicexml.com/docs/api/extract/json) |
 | [`extract-xml.php`](./extract-xml.php) | Extract the raw `factur-x.xml` from a ZUGFeRD PDF | [`POST /v1/extract/xml`](https://www.invoicexml.com/docs/api/extract/xml) |
-| [`ai-convert.php`](./ai-convert.php) | (Experimental) Convert a plain PDF to ZUGFeRD with AI | [`POST /v1/transform/to/zugferd`](https://www.invoicexml.com/docs/api/transform/to/zugferd) |
+| [`embed.php`](./embed.php) | Embed your own CII XML into your own PDF as a ZUGFeRD PDF/A-3 | [`POST /v1/embed/zugferd`](https://www.invoicexml.com/docs/api/embed/zugferd) |
 
 Each file is standalone and runnable with `php create.php`. Open the file, replace `YOUR_API_KEY` with your real key, and execute.
 
@@ -156,34 +156,31 @@ Returns the raw `factur-x.xml` payload (UN/CEFACT Cross-Industry Invoice syntax)
 
 ---
 
-## (Experimental) Convert a plain PDF to ZUGFeRD with AI
+## Embed your own XML into your own PDF
 
-> **Experimental feature. Human verification required before any production use.**
->
-> Real-world PDF invoices are often messy: scanned at low quality, irregularly formatted, multi-page, or missing fields that EN 16931 requires. AI extraction can make subtle mistakes that automated validators may not catch: wrong tax category codes, transposed amounts, missing seller VAT identifiers, incorrect currency formatting.
->
-> Always review the output PDF before sending it to a customer or tax authority. See the [AI conversion notes in the main README](../README.md#ai-powered-pdf-to-zugferd-conversion-experimental).
+When your application already renders the invoice PDF and already produces the EN 16931 XML, post both files and the API keeps your visual layer exactly as designed, promotes the container to PDF/A-3, and attaches the XML as `factur-x.xml` (the attachment name the ZUGFeRD specification prescribes since version 2.2) with the German (FeRD) AFRelationship and XMP conventions.
 
 ```php
-$ch = curl_init('https://api.invoicexml.com/v1/transform/to/zugferd');
+$ch = curl_init('https://api.invoicexml.com/v1/embed/zugferd');
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST           => true,
     CURLOPT_POSTFIELDS     => [
-        'file'     => new CURLFile('plain-invoice.pdf', 'application/pdf'),
-        'version'  => '2.3.2',
-        'profile'  => 'extended',
-        'syntax'   => 'cii',
-        'embed'    => 'true',
-        'language' => 'en',
+        'pdf'            => new CURLFile('invoice.pdf', 'application/pdf'),
+        'xml'            => new CURLFile('factur-x.xml', 'application/xml'),
+        'skipValidation' => 'false',
     ],
     CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . $apiKey],
 ]);
 $pdf = curl_exec($ch);
-file_put_contents('converted-zugferd.pdf', $pdf);
+file_put_contents('invoice-zugferd.pdf', $pdf);
 ```
 
-[Full example: `ai-convert.php`](./ai-convert.php) | [API reference](https://www.invoicexml.com/docs/api/transform/to/zugferd)
+The XML runs through the complete `/v1/validate/zugferd` rule set before anything is embedded, so a non-compliant invoice never leaves the API: fatal findings come back as a 400 with `errorCode` 4001 and the full finding list. Set `skipValidation` to `'true'` for packaging-only mode, where the structural checks (CII root element, official BT-24 profile URN, profile XSD) still apply but the business rules are skipped.
+
+Only UN/CEFACT CII XML is accepted. If your invoice is UBL, convert it first with [`POST /v1/convert/ubl/to/cii`](https://www.invoicexml.com/docs/api/convert/ubl/to/cii). For the French (FNFE-MPE) packaging conventions, call `/v1/embed/facturx` instead, same request shape.
+
+[Full example: `embed.php`](./embed.php) | [API reference](https://www.invoicexml.com/docs/api/embed/zugferd)
 
 ---
 
@@ -260,6 +257,6 @@ The same pattern works in Magento, Drupal Commerce, and PrestaShop.
 - [Validate ZUGFeRD API reference](https://www.invoicexml.com/docs/api/validate/zugferd)
 - [Extract JSON API reference](https://www.invoicexml.com/docs/api/extract/json)
 - [Extract XML API reference](https://www.invoicexml.com/docs/api/extract/xml)
-- [Transform to ZUGFeRD API reference](https://www.invoicexml.com/docs/api/transform/to/zugferd)
+- [Embed into ZUGFeRD API reference](https://www.invoicexml.com/docs/api/embed/zugferd)
 - [PHP cURL documentation](https://www.php.net/manual/en/book.curl.php)
 - [Main repository README](../README.md)

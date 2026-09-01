@@ -2,7 +2,7 @@
 
 Open-source code examples for working with **ZUGFeRD**, the German hybrid e-invoicing standard combining a human-readable PDF/A-3 with embedded structured XML data. Compliant with **EN 16931**, technically identical to **Factur-X** in France, and ready for Germany's B2B e-invoicing mandate (reception mandatory since January 2025).
 
-Examples in **C#, Java, PHP, JavaScript, Node.js, Python, and Ruby** covering every common ZUGFeRD operation: invoice creation, validation, structured data extraction as JSON, raw XML extraction, and (experimental) AI-powered conversion of plain PDF invoices into compliant ZUGFeRD documents.
+Examples in **C#, Java, PHP, JavaScript, Node.js, Python, and Ruby** covering every common ZUGFeRD operation: invoice creation, validation, structured data extraction as JSON, raw XML extraction, and embedding your own CII XML into your own PDF to produce a compliant hybrid PDF/A-3.
 
 Provided and maintained by [InvoiceXML](https://www.invoicexml.com), a complete e-invoice compliance toolkit for electronic invoicing standards, including ZUGFeRD, Factur-X, UBL, Peppol BIS Billing, and XRechnung, available via REST-API, no-code platforms, and MCP server.
 
@@ -27,7 +27,7 @@ The EN 16931 specification alone runs over 400 pages, PDF/A-3b conformance is st
   - [Create and validate ZUGFeRD with Ruby](#create-and-validate-zugferd-with-ruby)
 - [Extract structured data from ZUGFeRD as JSON](#extract-structured-data-from-zugferd-as-json)
 - [Extract embedded XML from a ZUGFeRD PDF](#extract-embedded-xml-from-a-zugferd-pdf)
-- [AI-powered PDF to ZUGFeRD conversion (Experimental)](#ai-powered-pdf-to-zugferd-conversion-experimental)
+- [Embed your own XML into your own PDF](#embed-your-own-xml-into-your-own-pdf)
 - [ZUGFeRD profiles and compliance levels](#zugferd-profiles-and-compliance-levels)
 - [Related e-invoicing standards](#related-e-invoicing-standards)
 - [Frequently asked questions](#frequently-asked-questions)
@@ -51,7 +51,7 @@ Most existing ZUGFeRD libraries are tied to a single language or vendor, and doc
 
 - Pick the language already used in their stack
 - See exactly which ZUGFeRD library to use and how to call it
-- Run the same operations (create, validate, extract JSON, extract XML, AI-convert) in any of the supported languages
+- Run the same operations (create, validate, extract JSON, extract XML, embed) in any of the supported languages
 - Compare behavior and output across implementations
 - Use the produced invoices as test fixtures for their own systems
 
@@ -65,7 +65,7 @@ Every example in this repository produces or consumes invoices that conform to t
 | **[Validate ZUGFeRD](https://www.invoicexml.com/docs/api/validate/zugferd)** | Verify a ZUGFeRD file against the official ZUGFeRD and EN 16931 schematron rules |
 | **[Extract JSON](https://www.invoicexml.com/docs/api/extract/json)** | Parse the embedded XML and return structured invoice data as JSON for downstream systems |
 | **[Extract XML](https://www.invoicexml.com/docs/api/extract/xml)** | Extract the raw XML payload from a ZUGFeRD PDF/A-3 container |
-| **[AI Convert](https://www.invoicexml.com/docs/api/transform/to/zugferd)** *(experimental)* | Convert a plain, unstructured PDF invoice into a compliant ZUGFeRD document using a large language model |
+| **[Embed XML into PDF](https://www.invoicexml.com/api/embed/zugferd)** | Attach your own CII XML to your own invoice PDF and get a compliant hybrid PDF/A-3 back |
 
 ---
 
@@ -81,7 +81,7 @@ Each language has its own folder containing all five operations as standalone, r
   Validate.cs       # Validate against ZUGFeRD schematron rules
   ExtractJson.cs    # Extract invoice data as JSON
   ExtractXml.cs     # Extract raw XML from a ZUGFeRD PDF
-  AiConvert.cs      # (Experimental) Convert plain PDF to ZUGFeRD using AI
+  Embed.cs          # Embed your own CII XML into your own PDF (hybrid PDF/A-3)
 ```
 
 [Open the C# / .NET examples →](./csharp)
@@ -94,7 +94,7 @@ Each language has its own folder containing all five operations as standalone, r
   Validate.java
   ExtractJson.java
   ExtractXml.java
-  AiConvert.java
+  Embed.java
 ```
 
 [Open the Java examples →](./java)
@@ -107,7 +107,7 @@ Each language has its own folder containing all five operations as standalone, r
   validate.php
   extract-json.php
   extract-xml.php
-  ai-convert.php
+  embed.php
 ```
 
 [Open the PHP examples →](./php)
@@ -122,7 +122,7 @@ Browser-side examples for generating and inspecting ZUGFeRD invoices client-side
   validate.html
   extract-json.html
   extract-xml.html
-  ai-convert.html
+  embed.html
 ```
 
 [Open the JavaScript examples →](./javascript)
@@ -135,7 +135,7 @@ Browser-side examples for generating and inspecting ZUGFeRD invoices client-side
   validate.js
   extract-json.js
   extract-xml.js
-  ai-convert.js
+  embed.js
 ```
 
 [Open the Node.js examples →](./nodejs)
@@ -148,7 +148,7 @@ Browser-side examples for generating and inspecting ZUGFeRD invoices client-side
   validate.py
   extract_json.py
   extract_xml.py
-  ai_convert.py
+  embed.py
 ```
 
 [Open the Python examples →](./python)
@@ -163,6 +163,7 @@ Standard library only (`Net::HTTP`), no gems. The Ruby folder additionally cover
   validate.rb
   extract_json.rb
   extract_xml.rb
+  embed.rb
   parse_json.rb
   extract_attachments.rb
 ```
@@ -185,24 +186,28 @@ A ZUGFeRD PDF/A-3 carries its XML as an attached file with a specific name and A
 
 ---
 
-## AI-powered PDF to ZUGFeRD conversion (Experimental)
+## Embed your own XML into your own PDF
 
-> **Experimental feature. Human verification required before any production use.**
->
-> Real-world PDF invoices are often messy: scanned at low quality, irregularly formatted, multi-page, multilingual, or missing fields that EN 16931 requires. Producing a fully compliant ZUGFeRD document from such an input is non-trivial, and AI extraction can make subtle mistakes that automated validators may not catch: wrong tax category codes, transposed amounts, missing seller VAT identifiers, incorrect currency formatting.
->
-> Output from the `AiConvert` examples **must always be reviewed by a human** before the invoice is sent to a customer or submitted to a tax authority. This is a developer convenience for bootstrapping test data and prototyping, **not** an unattended production pipeline.
+Many teams already have both halves of a hybrid invoice: their accounting system, template engine, or designer-made layout renders the PDF, and their ERP produces the EN 16931 XML. What is left is the packaging, and packaging is where hybrid invoices most often go wrong: PDF/A-3 conformance, the exact attachment name, the AFRelationship value, and the XMP metadata block that declares the ZUGFeRD profile.
 
-The `AiConvert` examples in each language demonstrate the same pattern:
+The `Embed` examples post both files to [`POST /v1/embed/zugferd`](https://www.invoicexml.com/docs/api/embed/zugferd) and get the finished hybrid PDF/A-3 back:
 
-1. Read a plain (non-ZUGFeRD) PDF invoice
-2. Send it to a large language model with a structured-extraction prompt
-3. Receive the inferred invoice fields (seller, buyer, line items, tax breakdown, totals, payment terms)
-4. Generate a ZUGFeRD-compliant XML from those fields
-5. Validate the XML against the ZUGFeRD schematron
-6. Embed the validated XML into a PDF/A-3 container alongside the original PDF content
+```
+pdf             your rendered invoice PDF (any standard PDF, promoted to PDF/A-3 in place)
+xml             your UN/CEFACT CII invoice XML (embedded verbatim as factur-x.xml)
+skipValidation  optional, default false
+```
 
-If validation fails at step 5, the example surfaces the specific schematron rule that was violated so a human reviewer can correct it. This is intentional. Silent failures are worse than visible ones in a tax-relevant document.
+Your visual layer is preserved exactly: same layout, fonts, and branding, no re-rendering. The XML is embedded verbatim, so what you send is what your recipient parses. The attachment is named `factur-x.xml`, which is what the ZUGFeRD specification has prescribed since version 2.2 (`zugferd-invoice.xml` was the legacy 1.0/2.0 name); a document declaring the XRechnung reference profile is attached as `xrechnung.xml` instead.
+
+Before anything is embedded, the XML runs through the complete `/v1/validate/zugferd` rule set (the profile's official XSD plus the matching Schematron business rules). Fatal findings reject the request with `errorCode` 4001 and the full list of violated rules, so a non-compliant invoice never reaches the buyer's system; warnings never block. Pass `skipValidation=true` for packaging-only mode, where structural checks (CII root element, official BT-24 profile URN, profile XSD conformance) still apply but business rules are skipped, useful during a migration.
+
+Two things to know:
+
+- **CII only.** The root element must be `<CrossIndustryInvoice>`. UBL documents are rejected; convert them first with [`POST /v1/convert/ubl/to/cii`](https://www.invoicexml.com/docs/api/convert/ubl/to/cii).
+- **French conventions.** `/v1/embed/facturx` takes the same request and applies the FNFE-MPE packaging practice instead (always `factur-x.xml` with AFRelationship `Data`, XRechnung and e-reporting wrapped at their EN 16931 baseline). Pick the endpoint matching what your recipient expects.
+
+If you want the API to render the PDF as well, use the [create endpoints](https://www.invoicexml.com/docs/api/create/zugferd) instead, which build both layers from a JSON invoice document.
 
 ---
 

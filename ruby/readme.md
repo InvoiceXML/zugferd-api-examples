@@ -49,6 +49,7 @@ There is no ZUGFeRD gem to install because no maintained one exists. The hits on
 | [`extract_xml.rb`](./extract_xml.rb) | Extract the raw `factur-x.xml` from a ZUGFeRD PDF | [`POST /v1/extract/xml`](https://www.invoicexml.com/docs/api/extract/xml) |
 | [`parse_json.rb`](./parse_json.rb) | Parse an old-school invoice PDF (scan, photo) with AI, with confidence scores | [`POST /v1/parse/json`](https://www.invoicexml.com/docs/api/parse/json) |
 | [`extract_attachments.rb`](./extract_attachments.rb) | Extract embedded supporting documents (BG-24) as a ZIP | [`POST /v1/extract/attachments`](https://www.invoicexml.com/docs/api/extract/attachments) |
+| [`embed.rb`](./embed.rb) | Embed your own CII XML into your own PDF as a ZUGFeRD PDF/A-3 | [`POST /v1/embed/zugferd`](https://www.invoicexml.com/docs/api/embed/zugferd) |
 
 Each file is standalone and runnable with `ruby create.rb`. Set `INVOICEXML_API_KEY` in your environment and execute. The files that take an input document default to `invoice-zugferd.pdf` (the output of `create.rb`), or accept a path as the first argument.
 
@@ -230,6 +231,30 @@ E-invoices can carry their supporting documents inside the invoice data itself: 
 
 ---
 
+## Embed your own XML into your own PDF in Ruby
+
+When your app already renders the invoice PDF (Prawn, wicked_pdf, a designer's template) and already produces the EN 16931 XML, post both files to `POST /v1/embed/zugferd`. Your visual layer is kept exactly as designed, the container is promoted to PDF/A-3, and the XML is attached as `factur-x.xml` (the attachment name the ZUGFeRD specification prescribes since version 2.2) with the German (FeRD) AFRelationship and XMP conventions. `Net::HTTP#set_form` handles the two file parts in one multipart request:
+
+```ruby
+response = File.open("invoice.pdf", "rb") do |pdf|
+  File.open("factur-x.xml", "rb") do |xml|
+    request.set_form(
+      [["pdf", pdf], ["xml", xml], ["skipValidation", "false"]],
+      "multipart/form-data"
+    )
+    api_http(uri).request(request)
+  end
+end
+```
+
+The XML runs through the complete `/v1/validate/zugferd` rule set before anything is embedded, so a non-compliant invoice never leaves the API: fatal findings come back as a 400 with `errorCode` 4001 and the full finding list. Set `skipValidation` to `"true"` for packaging-only mode, where the structural checks (CII root element, official BT-24 profile URN, profile XSD) still apply but the business rules are skipped.
+
+Only UN/CEFACT CII XML is accepted. If your invoice is UBL, convert it first with [`POST /v1/convert/ubl/to/cii`](https://www.invoicexml.com/docs/api/convert/ubl/to/cii). For the French (FNFE-MPE) packaging conventions, call `/v1/embed/facturx` instead, same request shape.
+
+[Full example: `embed.rb`](./embed.rb) | [API reference](https://www.invoicexml.com/docs/api/embed/zugferd)
+
+---
+
 ## Rails integration
 
 In a Rails app, promote the calls into a service object. Faraday with `faraday-multipart` is the idiomatic client, and Rails credentials keep the key out of environment-variable sprawl:
@@ -321,5 +346,6 @@ One caution on the retry policy: retry transport failures and 5xx responses, but
 - [Extract XML API reference](https://www.invoicexml.com/docs/api/extract/xml)
 - [Parse JSON (AI) API reference](https://www.invoicexml.com/docs/api/parse/json)
 - [Extract attachments API reference](https://www.invoicexml.com/docs/api/extract/attachments)
+- [Embed into ZUGFeRD API reference](https://www.invoicexml.com/docs/api/embed/zugferd)
 - [Ruby Net::HTTP documentation](https://docs.ruby-lang.org/en/master/Net/HTTP.html)
 - [Main repository README](../README.md)
