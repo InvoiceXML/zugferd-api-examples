@@ -43,7 +43,7 @@ The EN 16931 specification alone runs over 400 pages, PDF/A-3b conformance is st
 
 ZUGFeRD 2.x is fully aligned with **EN 16931**, the European norm for electronic invoicing. In France the same specification is published under the name **Factur-X**. The technical content is identical; only the branding differs. Since January 2025, all German businesses must be able to receive electronic invoices, and ZUGFeRD invoices in profile EN 16931 (Comfort) or higher qualify as e-invoices under the German B2B rules.
 
-For a longer introduction including history, profiles, and legal status, see the [ZUGFeRD overview guide on invoicexml.com](https://invoicexml.com/zugferd).
+For a longer introduction including history, profiles, and legal status, see the [ZUGFeRD overview guide on invoicexml.com](https://www.invoicexml.com/zugferd).
 
 ## Why use this repository
 
@@ -243,7 +243,7 @@ ZUGFeRD is one of several formats in the European e-invoicing landscape. If you 
 - **XRechnung**: German B2G-mandatory profile, available in both UBL and CII syntax.
 - **EN 16931**: the European norm that underlies ZUGFeRD, Factur-X, Peppol BIS, and XRechnung.
 
-For a side-by-side comparison of when to use which format, see the [e-invoicing standards comparison on invoicexml.com](https://invoicexml.com/standards).
+For a side-by-side comparison of when to use which format, see the [e-invoicing standards comparison on invoicexml.com](https://www.invoicexml.com/standards).
 
 ---
 
@@ -272,7 +272,7 @@ ZUGFeRD is a hybrid PDF+XML format using the UN/CEFACT Cross-Industry Invoice (C
 - [Factur-X specification (FNFE-MPE, France)](https://fnfe-mpe.org/factur-x/)
 - [EN 16931 (European Committee for Standardization)](https://www.cencenelec.eu/)
 - [Peppol BIS Billing 3.0](https://docs.peppol.eu/poacc/billing/3.0/)
-- [invoicexml.com](https://invoicexml.com): guides, tutorials, validators, and standard comparisons for ZUGFeRD, Factur-X, UBL, Peppol, and XRechnung
+- [invoicexml.com](https://www.invoicexml.com): guides, tutorials, validators, and standard comparisons for ZUGFeRD, Factur-X, UBL, Peppol, and XRechnung
 
 ---
 
