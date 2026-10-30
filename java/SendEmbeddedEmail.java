@@ -13,6 +13,7 @@
 // Dependency: com.squareup.okhttp3:okhttp:4.12.0
 
 import okhttp3.*;
+import java.time.Duration;
 import java.io.File;
 
 public class SendEmbeddedEmail {
@@ -40,7 +41,11 @@ public class SendEmbeddedEmail {
             .post(body)
             .build();
 
-        try (Response response = new OkHttpClient().newCall(request).execute()) {
+        // The API can take up to 90 seconds. With OkHttp's default 10 second read timeout this
+        // call could report a failure after the email went out, and a rerun would send it twice.
+        OkHttpClient client = new OkHttpClient.Builder().readTimeout(Duration.ofSeconds(120)).build();
+
+        try (Response response = client.newCall(request).execute()) {
             String text = response.body().string();
             if (!response.isSuccessful()) {
                 System.err.println("InvoiceXML API error " + response.code() + ": " + text);
