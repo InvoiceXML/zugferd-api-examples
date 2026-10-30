@@ -34,10 +34,12 @@ If you prefer plain `HttpClient` over Flurl, every example translates directly. 
 | File | Operation | API endpoint |
 |---|---|---|
 | [`Create.cs`](./Create.cs) | Build a ZUGFeRD PDF/A-3 invoice with embedded EN 16931 XML | [`POST /v1/create/zugferd`](https://www.invoicexml.com/docs/api/create/zugferd) |
+| [`SendEmail.cs`](./SendEmail.cs) | Create a ZUGFeRD invoice and email it from your own domain | [`POST /v1/create/zugferd/email`](https://www.invoicexml.com/docs/api/create/zugferd/email) |
 | [`Validate.cs`](./Validate.cs) | Validate a ZUGFeRD file against schematron rules | [`POST /v1/validate/zugferd`](https://www.invoicexml.com/docs/api/validate/zugferd) |
 | [`ExtractJson.cs`](./ExtractJson.cs) | Extract ZUGFeRD invoice data as JSON | [`POST /v1/extract/json`](https://www.invoicexml.com/docs/api/extract/json) |
 | [`ExtractXml.cs`](./ExtractXml.cs) | Extract the raw `factur-x.xml` from a ZUGFeRD PDF | [`POST /v1/extract/xml`](https://www.invoicexml.com/docs/api/extract/xml) |
 | [`Embed.cs`](./Embed.cs) | Embed your own CII XML into your own PDF as a ZUGFeRD PDF/A-3 | [`POST /v1/embed/zugferd`](https://www.invoicexml.com/docs/api/embed/zugferd) |
+| [`SendEmbeddedEmail.cs`](./SendEmbeddedEmail.cs) | Embed your own CII XML into your own PDF and email it from your own domain | [`POST /v1/embed/zugferd/email`](https://www.invoicexml.com/docs/api/embed/zugferd/email) |
 
 > **Note on the snippets below:** they are excerpts from those files and assume an `apiKey` variable is already defined and that the code runs inside an `async` method. The full files show the complete, compilable versions.
 

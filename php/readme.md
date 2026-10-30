@@ -31,10 +31,12 @@ These examples use the built-in `curl_*` functions and `CURLFile` (available sin
 | File | Operation | API endpoint |
 |---|---|---|
 | [`create.php`](./create.php) | Build a ZUGFeRD PDF/A-3 invoice with embedded EN 16931 XML | [`POST /v1/create/zugferd`](https://www.invoicexml.com/docs/api/create/zugferd) |
+| [`send-email.php`](./send-email.php) | Create a ZUGFeRD invoice and email it from your own domain | [`POST /v1/create/zugferd/email`](https://www.invoicexml.com/docs/api/create/zugferd/email) |
 | [`validate.php`](./validate.php) | Validate a ZUGFeRD file against schematron rules | [`POST /v1/validate/zugferd`](https://www.invoicexml.com/docs/api/validate/zugferd) |
 | [`extract-json.php`](./extract-json.php) | Extract ZUGFeRD invoice data as JSON | [`POST /v1/extract/json`](https://www.invoicexml.com/docs/api/extract/json) |
 | [`extract-xml.php`](./extract-xml.php) | Extract the raw `factur-x.xml` from a ZUGFeRD PDF | [`POST /v1/extract/xml`](https://www.invoicexml.com/docs/api/extract/xml) |
 | [`embed.php`](./embed.php) | Embed your own CII XML into your own PDF as a ZUGFeRD PDF/A-3 | [`POST /v1/embed/zugferd`](https://www.invoicexml.com/docs/api/embed/zugferd) |
+| [`send-embedded-email.php`](./send-embedded-email.php) | Embed your own CII XML into your own PDF and email it from your own domain | [`POST /v1/embed/zugferd/email`](https://www.invoicexml.com/docs/api/embed/zugferd/email) |
 
 Each file is standalone and runnable with `php create.php`. Open the file, replace `YOUR_API_KEY` with your real key, and execute.
 

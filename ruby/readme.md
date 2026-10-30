@@ -44,12 +44,14 @@ There is no ZUGFeRD gem to install because no maintained one exists. The hits on
 | File | Operation | API endpoint |
 |---|---|---|
 | [`create.rb`](./create.rb) | Build a ZUGFeRD PDF/A-3 invoice with embedded EN 16931 XML | [`POST /v1/create/zugferd`](https://www.invoicexml.com/docs/api/create/zugferd) |
+| [`send_email.rb`](./send_email.rb) | Create a ZUGFeRD invoice and email it from your own domain | [`POST /v1/create/zugferd/email`](https://www.invoicexml.com/docs/api/create/zugferd/email) |
 | [`validate.rb`](./validate.rb) | Validate a ZUGFeRD file against schematron rules | [`POST /v1/validate/zugferd`](https://www.invoicexml.com/docs/api/validate/zugferd) |
 | [`extract_json.rb`](./extract_json.rb) | Extract ZUGFeRD invoice data as JSON (deterministic, no AI) | [`POST /v1/extract/json`](https://www.invoicexml.com/docs/api/extract/json) |
 | [`extract_xml.rb`](./extract_xml.rb) | Extract the raw `factur-x.xml` from a ZUGFeRD PDF | [`POST /v1/extract/xml`](https://www.invoicexml.com/docs/api/extract/xml) |
 | [`parse_json.rb`](./parse_json.rb) | Parse an old-school invoice PDF (scan, photo) with AI, with confidence scores | [`POST /v1/parse/json`](https://www.invoicexml.com/docs/api/parse/json) |
 | [`extract_attachments.rb`](./extract_attachments.rb) | Extract embedded supporting documents (BG-24) as a ZIP | [`POST /v1/extract/attachments`](https://www.invoicexml.com/docs/api/extract/attachments) |
 | [`embed.rb`](./embed.rb) | Embed your own CII XML into your own PDF as a ZUGFeRD PDF/A-3 | [`POST /v1/embed/zugferd`](https://www.invoicexml.com/docs/api/embed/zugferd) |
+| [`send_embedded_email.rb`](./send_embedded_email.rb) | Embed your own CII XML into your own PDF and email it from your own domain | [`POST /v1/embed/zugferd/email`](https://www.invoicexml.com/docs/api/embed/zugferd/email) |
 
 Each file is standalone and runnable with `ruby create.rb`. Set `INVOICEXML_API_KEY` in your environment and execute. The files that take an input document default to `invoice-zugferd.pdf` (the output of `create.rb`), or accept a path as the first argument.
 

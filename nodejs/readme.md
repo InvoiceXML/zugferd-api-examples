@@ -30,10 +30,12 @@ The examples use Node's built-in global `fetch`, `FormData`, `Blob`, and `Buffer
 | File | Operation | API endpoint |
 |---|---|---|
 | [`create.js`](./create.js) | Build a ZUGFeRD PDF/A-3 invoice with embedded EN 16931 XML | [`POST /v1/create/zugferd`](https://www.invoicexml.com/docs/api/create/zugferd) |
+| [`send-email.js`](./send-email.js) | Create a ZUGFeRD invoice and email it from your own domain | [`POST /v1/create/zugferd/email`](https://www.invoicexml.com/docs/api/create/zugferd/email) |
 | [`validate.js`](./validate.js) | Validate a ZUGFeRD file against schematron rules | [`POST /v1/validate/zugferd`](https://www.invoicexml.com/docs/api/validate/zugferd) |
 | [`extract-json.js`](./extract-json.js) | Extract ZUGFeRD invoice data as JSON | [`POST /v1/extract/json`](https://www.invoicexml.com/docs/api/extract/json) |
 | [`extract-xml.js`](./extract-xml.js) | Extract the raw `factur-x.xml` from a ZUGFeRD PDF | [`POST /v1/extract/xml`](https://www.invoicexml.com/docs/api/extract/xml) |
 | [`embed.js`](./embed.js) | Embed your own CII XML into your own PDF as a ZUGFeRD PDF/A-3 | [`POST /v1/embed/zugferd`](https://www.invoicexml.com/docs/api/embed/zugferd) |
+| [`send-embedded-email.js`](./send-embedded-email.js) | Embed your own CII XML into your own PDF and email it from your own domain | [`POST /v1/embed/zugferd/email`](https://www.invoicexml.com/docs/api/embed/zugferd/email) |
 
 Each file is standalone and runnable with `node create.js`. Open the file, replace `YOUR_API_KEY` with your real key, and execute.
 

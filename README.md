@@ -25,6 +25,7 @@ The EN 16931 specification alone runs over 400 pages, PDF/A-3b conformance is st
   - [Create and validate ZUGFeRD with Node.js](#create-and-validate-zugferd-with-nodejs)
   - [Create and validate ZUGFeRD with Python](#create-and-validate-zugferd-with-python)
   - [Create and validate ZUGFeRD with Ruby](#create-and-validate-zugferd-with-ruby)
+- [Send ZUGFeRD invoices by email](#send-zugferd-invoices-by-email)
 - [Extract structured data from ZUGFeRD as JSON](#extract-structured-data-from-zugferd-as-json)
 - [Extract embedded XML from a ZUGFeRD PDF](#extract-embedded-xml-from-a-zugferd-pdf)
 - [Embed your own XML into your own PDF](#embed-your-own-xml-into-your-own-pdf)
@@ -62,6 +63,7 @@ Every example in this repository produces or consumes invoices that conform to t
 | Operation | Description |
 |---|---|
 | **[Create ZUGFeRD](https://www.invoicexml.com/docs/api/create/zugferd)** | Build a ZUGFeRD PDF/A-3 invoice from scratch with embedded EN 16931 XML |
+| **[Send by email](https://www.invoicexml.com/docs/api/create/zugferd/email)** | Generate the invoice and email it from your own verified domain in one API call |
 | **[Validate ZUGFeRD](https://www.invoicexml.com/docs/api/validate/zugferd)** | Verify a ZUGFeRD file against the official ZUGFeRD and EN 16931 schematron rules |
 | **[Extract JSON](https://www.invoicexml.com/docs/api/extract/json)** | Parse the embedded XML and return structured invoice data as JSON for downstream systems |
 | **[Extract XML](https://www.invoicexml.com/docs/api/extract/xml)** | Extract the raw XML payload from a ZUGFeRD PDF/A-3 container |
@@ -71,7 +73,7 @@ Every example in this repository produces or consumes invoices that conform to t
 
 ## Quick start by language
 
-Each language has its own folder containing all five operations as standalone, runnable files. Open the folder for your language to see installation steps, dependencies, and usage.
+Each language has its own folder containing all of these operations as standalone, runnable files. Open the folder for your language to see installation steps, dependencies, and usage.
 
 ### Create and validate ZUGFeRD with C# / .NET
 
@@ -175,6 +177,50 @@ Standard library only (`Net::HTTP`), no gems. The Ruby folder additionally cover
 ```
 
 [Open the Ruby examples →](./ruby)
+
+---
+
+## Send ZUGFeRD invoices by email
+
+Generate an invoice and deliver it in one API call. [`POST /v1/create/zugferd/email`](https://www.invoicexml.com/docs/api/create/zugferd/email) takes the same request as [`POST /v1/create/zugferd`](https://www.invoicexml.com/docs/api/create/zugferd) plus an `email` object, builds and validates the invoice, and sends the ZUGFeRD PDF/A-3 as an attachment from your own domain. See [email delivery for ZUGFeRD](https://www.invoicexml.com/api/create/zugferd/email).
+
+Setup takes three steps:
+
+1. Add your domain on the [Verified email domains](https://www.invoicexml.com/account/sending-domains) page of your dashboard.
+2. Add the DNS records it shows you. Verification usually completes within minutes and can take up to 72 hours.
+3. Call the route, with any address on that domain as the sender.
+
+```js
+const response = await fetch('https://api.invoicexml.com/v1/create/zugferd/email', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + apiKey,
+    },
+    body: JSON.stringify({
+        invoice,
+        email: {
+            from:    'invoices@yourcompany.com',
+            to:      'customer@example.com',
+            subject: 'Invoice MIN-001',
+            message: 'Hello,\n\nPlease find attached invoice MIN-001.\n\nKind regards',
+        },
+    }),
+});
+```
+
+The answer is `{"status":"accepted","messageId":"..."}` instead of the file: the email was handed over for delivery. `subject` and `message` are optional, and `cc`, `bcc` and `replyTo` are available too. If your plan does not include email delivery the API answers 403, and [pricing](https://www.invoicexml.com/pricing) shows what does.
+
+Already have your own PDF? [`POST /v1/embed/zugferd/email`](https://www.invoicexml.com/docs/api/embed/zugferd/email) takes the same `pdf` and `xml` parts as the embed route, plus the email as `email.from`, `email.to` and so on in plain form fields. It always validates the XML, so it has no `skipValidation`.
+
+| Language | Create and send | Embed and send |
+|---|---|---|
+| C# / .NET | [`SendEmail.cs`](./csharp/SendEmail.cs) | [`SendEmbeddedEmail.cs`](./csharp/SendEmbeddedEmail.cs) |
+| Java | [`SendEmail.java`](./java/SendEmail.java) | [`SendEmbeddedEmail.java`](./java/SendEmbeddedEmail.java) |
+| PHP | [`send-email.php`](./php/send-email.php) | [`send-embedded-email.php`](./php/send-embedded-email.php) |
+| Node.js | [`send-email.js`](./nodejs/send-email.js) | [`send-embedded-email.js`](./nodejs/send-embedded-email.js) |
+| Python | [`send_email.py`](./python/send_email.py) | [`send_embedded_email.py`](./python/send_embedded_email.py) |
+| Ruby | [`send_email.rb`](./ruby/send_email.rb) | [`send_embedded_email.rb`](./ruby/send_embedded_email.rb) |
 
 ---
 
